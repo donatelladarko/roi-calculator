@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ROI Calculator Prototype</title>
+    <title>Ad Impact Calculator</title>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -66,63 +66,52 @@
 </head>
 <body>
     <div class="container">
-        <h1>ROI Calculator</h1>
-        <form id="roi-form">
-            <label for="annual-revenue">Average Annual Revenue ($)</label>
-            <input type="number" id="annual-revenue" placeholder="Enter your annual revenue" required>
-
-            <label for="rep-lines">Number of Rep Lines</label>
-            <input type="number" id="rep-lines" placeholder="Enter the number of rep lines" required>
-
-            <label for="monthly-visits">Average Monthly Website Visits</label>
-            <input type="number" id="monthly-visits" placeholder="Enter monthly website visits" required>
-
-            <label for="bounce-rate">Average Bounce Rate (%)</label>
-            <input type="number" id="bounce-rate" placeholder="Enter bounce rate" required>
-
+        <h1>Ad Impact Calculator</h1>
+        <form id="ad-impact-form">
             <label for="ad-budget">Monthly Ad Budget ($)</label>
             <input type="number" id="ad-budget" placeholder="Enter your ad budget" required>
 
-            <button type="button" onclick="calculateROI()">Calculate ROI</button>
+            <label for="ctr">Click-Through Rate (%)</label>
+            <input type="number" id="ctr" placeholder="Enter expected CTR (e.g., 3)" required>
+
+            <label for="conversion-rate">On-Site Conversion Rate (%)</label>
+            <input type="number" id="conversion-rate" placeholder="Enter on-site conversion rate (e.g., 20)" required>
+
+            <label for="avg-deal-value">Average Deal Value ($)</label>
+            <input type="number" id="avg-deal-value" placeholder="Enter average deal value" required>
+
+            <button type="button" onclick="calculateImpact()">Calculate Impact</button>
         </form>
 
         <div id="results" class="result" style="display: none;">
             <h2>Results</h2>
             <p id="new-visitors"></p>
             <p id="conversions"></p>
-            <p id="revenue-increase"></p>
-            <p id="roi"></p>
+            <p id="estimated-revenue"></p>
         </div>
     </div>
 
     <script>
-        function calculateROI() {
-            const revenue = parseFloat(document.getElementById('annual-revenue').value);
-            const repLines = parseInt(document.getElementById('rep-lines').value);
-            const visits = parseInt(document.getElementById('monthly-visits').value);
-            const bounceRate = parseFloat(document.getElementById('bounce-rate').value) / 100;
+        function calculateImpact() {
             const adBudget = parseFloat(document.getElementById('ad-budget').value);
-
-            // Default values for calculations
-            const avgCTR = 0.03; // 3% Click-Through Rate
-            const leadToSaleRate = 0.20; // 20% conversion rate
-            const avgDealValue = revenue / (visits * 12 * (1 - bounceRate)); // Avg. revenue per visitor per year
+            const ctr = parseFloat(document.getElementById('ctr').value) / 100;
+            const conversionRate = parseFloat(document.getElementById('conversion-rate').value) / 100;
+            const avgDealValue = parseFloat(document.getElementById('avg-deal-value').value);
 
             // Calculations
             const impressions = adBudget * 100000 / 1000; // Assuming 100k impressions per $1,000
-            const newVisitors = impressions * avgCTR;
-            const conversions = newVisitors * leadToSaleRate;
-            const revenueIncrease = conversions * avgDealValue;
-            const roi = ((revenueIncrease - adBudget * 12) / (adBudget * 12)) * 100;
+            const newVisitors = impressions * ctr;
+            const conversions = newVisitors * conversionRate;
+            const estimatedRevenue = conversions * avgDealValue;
 
             // Display results
             document.getElementById('new-visitors').innerText = `Estimated New Monthly Visitors: ${Math.round(newVisitors)}`;
             document.getElementById('conversions').innerText = `Estimated Conversions: ${Math.round(conversions)}`;
-            document.getElementById('revenue-increase').innerText = `Projected Annual Revenue Increase: $${revenueIncrease.toFixed(2)}`;
-            document.getElementById('roi').innerText = `Estimated ROI: ${roi.toFixed(2)}%`;
+            document.getElementById('estimated-revenue').innerText = `Projected Monthly Revenue Increase: $${estimatedRevenue.toFixed(2)}`;
 
             document.getElementById('results').style.display = 'block';
         }
     </script>
 </body>
 </html>
+
